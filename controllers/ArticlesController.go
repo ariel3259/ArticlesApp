@@ -1,7 +1,6 @@
 package controllers
 
 import (
-	"ArticlesApi/database"
 	"ArticlesApi/model"
 	"ArticlesApi/services"
 	"encoding/json"
@@ -9,19 +8,16 @@ import (
 	"net/http"
 	"strconv"
 
-	"ArticlesApi/middlewares"
-
 	"github.com/gorilla/mux"
 )
 
 func StartArticlesRouting(r *mux.Router) {
 	//Init connection for Articles Services
-	services.SetConForArticles(database.GetCon())
-	r.HandleFunc("/api/articles", middlewares.MultipleMiddlewares(getAll, middlewares.DefaultHeaders)).Methods("GET")
-	r.HandleFunc("/api/articles/{id}", middlewares.MultipleMiddlewares(getOne, middlewares.DefaultHeaders)).Methods("GET")
-	r.HandleFunc("/api/articles", middlewares.MultipleMiddlewares(save, middlewares.DefaultHeaders)).Methods("POST")
-	r.HandleFunc("/api/articles/{id}", middlewares.MultipleMiddlewares(modify, middlewares.DefaultHeaders)).Methods("PUT")
-	r.HandleFunc("/api/articles/{id}", middlewares.MultipleMiddlewares(delete, middlewares.DefaultHeaders)).Methods("DELETE")
+	r.HandleFunc("/api/articles", getAll).Methods("GET")
+	r.HandleFunc("/api/articles/{id}", getOne).Methods("GET")
+	r.HandleFunc("/api/articles", save).Methods("POST")
+	r.HandleFunc("/api/articles/{id}", modify).Methods("PUT")
+	r.HandleFunc("/api/articles/{id}", delete).Methods("DELETE")
 }
 
 func getAll(w http.ResponseWriter, r *http.Request) {

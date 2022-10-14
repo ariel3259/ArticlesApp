@@ -7,16 +7,11 @@ import (
 	"gorm.io/gorm"
 )
 
-var db *gorm.DB
-
-func SetConForArticles(_db *gorm.DB) {
-	db = _db
-	database.MakeModels(db)
-}
+var db *gorm.DB = database.GetCon()
 
 func GetArticles() []model.Articles {
 	var articles []model.Articles
-	db.Find(&articles, model.Articles{State: true})
+	db.Offset(0).Limit(10).Find(&articles, model.Articles{State: true})
 	return articles
 }
 

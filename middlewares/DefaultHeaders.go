@@ -2,9 +2,9 @@ package middlewares
 
 import "net/http"
 
-func DefaultHeaders(next http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
+func DefaultHeaders(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Add("Content-Type", "application/json")
-		next(w, r)
-	}
+		next.ServeHTTP(w, r)
+	})
 }
