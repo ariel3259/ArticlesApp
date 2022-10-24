@@ -13,15 +13,28 @@ import (
 
 func StartArticlesRouting(r *mux.Router) {
 	//Init connection for Articles Services
-	r.HandleFunc("/api/articles", getAll).Methods("GET")
-	r.HandleFunc("/api/articles/{id}", getOne).Methods("GET")
-	r.HandleFunc("/api/articles", save).Methods("POST")
-	r.HandleFunc("/api/articles/{id}", modify).Methods("PUT")
-	r.HandleFunc("/api/articles/{id}", delete).Methods("DELETE")
+	r.HandleFunc("/api/articles", getAll).Methods("GET", "OPTIONS")
+	r.HandleFunc("/api/articles/{id}", getOne).Methods("GET", "OPTIONS")
+	r.HandleFunc("/api/articles", save).Methods("POST", "OPTIONS")
+	r.HandleFunc("/api/articles/{id}", modify).Methods("PUT", "OPTIONS")
+	r.HandleFunc("/api/articles/{id}", delete).Methods("DELETE", "OPTIONS")
 }
 
 func getAll(w http.ResponseWriter, r *http.Request) {
-	articles := services.GetArticles()
+	q := r.URL.Query()
+	var total int64
+	offset, err := strconv.Atoi(q.Get("offset"))
+	if err != nil {
+		w.WriteHeader(400)
+		json.NewEncoder(w).Encode("[]")
+	}
+	limit, err := strconv.Atoi(q.Get("limit"))
+	if err != nil {
+		w.WriteHeader(400)
+		json.NewEncoder(w).Encode("[]")
+	}
+	articles := services.GetArticles(offset, limit, &total)
+	w.Header().Add("x-total-count", strconv.Itoa(int(total)))
 	json.NewEncoder(w).Encode(articles)
 }
 

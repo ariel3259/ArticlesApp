@@ -8,6 +8,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	"github.com/rs/cors"
 )
 
 func main() {
@@ -15,6 +16,8 @@ func main() {
 	database.MakeModels(database.GetCon())
 	middlewares.RunMiddlewares(r)
 	controllers.StartRouters(r)
+	handler := cors.AllowAll().Handler(r)
 	fmt.Println("Server online on port 8000")
-	http.ListenAndServe(":8000", r)
+
+	http.ListenAndServe(":8000", handler)
 }

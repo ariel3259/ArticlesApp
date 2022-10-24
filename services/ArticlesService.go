@@ -9,9 +9,10 @@ import (
 
 var db *gorm.DB = database.GetCon()
 
-func GetArticles() []model.Articles {
+func GetArticles(offset int, limit int, total *int64) []model.Articles {
 	var articles []model.Articles
-	db.Offset(0).Limit(10).Find(&articles, model.Articles{State: true})
+	db.Model(model.Articles{}).Count(total)
+	db.Offset(offset).Limit(limit).Find(&articles, model.Articles{State: true})
 	return articles
 }
 
